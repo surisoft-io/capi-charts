@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+items:
+# MONGO Service
+- apiVersion: v1
+  kind: Service
+  metadata:
+    labels:
+      service: mongo
+    name: mongo
+  spec:
+    ports:
+    - name: "{{ .Values.service.port }}"
+      port: {{ .Values.service.port }}
+      targetPort: {{ .Values.service.port }}
+    selector:
+      service: mongo
+    type: LoadBalancer
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    labels:
+      service: mongo
+    name: mongo
+  spec:
+    selector:
+      matchLabels:
+        service: mongo
+    replicas: 1
+    strategy:
+      type: Recreate
+    template:
+      metadata:
+        labels:
+          service: mongo
+      spec:
+        containers:
+        - env:
+          - name: MONGO_INITDB_DATABASE
+            value: {{ .Values.db.name }}
+          - name: MONGO_INITDB_ROOT_PASSWORD
+            value: {{ .Values.db.password }}
+          - name: MONGO_INITDB_ROOT_USERNAME
+            value: {{ .Values.db.user }}
+          image: {{ .Values.image.repository }}
+          name: capi-mongo
+          ports:
+          - containerPort: {{ .Values.service.port }}
+          resources: {}
+          volumeMounts:
+          - name: mongo-init
+            mountPath: /docker-entrypoint-initdb.d/init-mongo.js
+            subPath: init-mongo.js
+        restartPolicy: Always
+        volumes:
+        - name: mongo-init
+          configMap:
+            name: mongo-init
+  status: {}
+kind: List
+metadata: {}
+

@@ -1,0 +1,76 @@
+apiVersion: apps/v1
+items:
+# Keycloak Service
+- apiVersion: v1
+  kind: Service
+  metadata:
+    labels:
+      io.kompose.service: keycloak
+    name: keycloak
+  spec:
+    ports:
+    - name: "8443"
+      port: 8443
+      targetPort: 8443
+    - name: "9990"
+      port: 9990
+      targetPort: 9990
+    selector:
+      io.kompose.service: keycloak
+    type: LoadBalancer
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    labels:
+      io.kompose.service: keycloak
+    name: keycloak
+  spec:
+    selector:
+      matchLabels:
+        io.kompose.service: keycloak
+    replicas: 1
+    strategy:
+      type: Recreate
+    template:
+      metadata:
+        labels:
+          io.kompose.service: keycloak
+      spec:
+        containers:
+        - env:
+          - name: KEYCLOAK_USER
+            value: admin
+          - name: KEYCLOAK_PASSWORD
+            value: admin
+          - name: KEYCLOAK_IMPORT
+            value: /tmp/realm-export-kc.json
+          image: jboss/keycloak
+          name: capi-keycloak
+          ports:
+          - containerPort: 8443
+          resources: {}
+          volumeMounts:
+          - mountPath: /tmp/realm-export-kc.json
+            subPath: realm-export-kc.json
+            name: realm-export
+          - mountPath: /etc/x509/https/tls.crt
+            subPath: tls.crt
+            name: tls-crt
+          - mountPath: /etc/x509/https/tls.key
+            subPath: tls.key
+            name: tls-key
+        restartPolicy: Always
+        volumes:
+        - name: realm-export
+          configMap:
+            name: realm-export
+        - name: tls-crt
+          configMap:
+            name: tls-crt
+        - name: tls-key
+          configMap:
+            name: tls-key
+  status: {}
+kind: List
+metadata: {}
+
