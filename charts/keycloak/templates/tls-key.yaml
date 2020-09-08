@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: tls-key
+data:
+  tls.key: |-
+{{ .Files.Get "tls.key" | indent 4}}
