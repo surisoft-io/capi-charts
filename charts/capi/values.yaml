@@ -1,0 +1,147 @@
+# Default values for capi.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository: surisoft/capi-gateway:1.4.1
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: ""
+
+service:
+  port: 8380
+
+server:
+  ssl:
+    enabled: true
+    key:
+      store: 
+        type: PKCS12
+        path: /keys/capi.p12
+        alias: capigateway
+        password: capigateway
+    trust:
+      store: 
+        path: /keys/truststore.jks
+        password: capigateway
+
+token:
+  provider:
+    key: 
+      alias: capigateway
+      password: capigateway
+      path: /keys/capi.p12
+
+spring:
+  profiles:
+    active: demo
+  data:
+    mongodb:
+      host: mongo
+      port: 27017
+      username: capi
+      database: capi
+      password: capi
+api:
+  gateway:
+    manager:
+      orign: http://localhost:4200
+    traffic:
+      inspector:
+        enabled: true
+        kafka:
+          topic: capi-traffic-inspector
+          groupId: capiGroup
+          broker: kafka:9092
+    error:
+      endpoint: capi:8380/capi-error
+    grafana:
+      endpoint: http://grafana:3000/api/dashboards/db 
+      create:
+        dashboard: true
+        panels: false
+      user: admin
+      password: admin
+      token:
+      basic:
+        auth: true
+      datasource: Prometheus
+    zipkin:
+      endpoint: http://zipkin:9411/api/v2/spans
+    prometheus:
+      endpoint: http://prometheus:9090
+    api:
+      throttling:
+        inspector:
+          period: 5000
+      running:
+        inspector:
+          period: 60000
+gateway:
+  cache:
+    zookeeper:
+      discovery: true
+      host: zookeeper:2181
+      path: /discovery/hazelcast
+      group:
+        key: capi   
+capi:
+  authorization:
+    keys:
+      endpoint: https://keycloak:8443/auth/realms/capi/protocol/openid-connect/certs        
+http:
+  client:
+    ssl:
+      trust:
+        store: 
+          path: /keys/truststore.jks
+          password: capigateway
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

@@ -1,0 +1,144 @@
+apiVersion: apps/v1
+items:
+- apiVersion: v1
+  kind: Service
+  metadata:
+    labels:
+      service: capi
+    name: capi
+  spec:
+    ports:
+    - name: "{{ .Values.service.port }}"
+      port: {{ .Values.service.port }}
+      targetPort: {{ .Values.service.port }}
+    selector:
+      service: capi
+    type: LoadBalancer
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    labels:
+      service: capi
+    name: capi
+  spec:
+    selector:
+      matchLabels:
+        service: capi
+    replicas: 1
+    strategy:
+      type: Recreate
+    template:
+      metadata:
+        labels:
+          service: capi
+      spec:
+        containers:
+        - env:
+          - name: api.gateway.api.running.inspector.period
+            value: "{{ .Values.api.gateway.api.running.inspector.period }}"
+          - name: api.gateway.api.throttling.inspector.period
+            value: "{{ .Values.api.gateway.api.throttling.inspector.period }}"
+          - name: api.gateway.prometheus.endpoint
+            value: {{ .Values.api.gateway.prometheus.endpoint }}
+          - name: api.gateway.zipkin.endpoint
+            value: {{ .Values.api.gateway.zipkin.endpoint }}
+          - name: api.gateway.error.endpoint
+            value: {{ .Values.api.gateway.error.endpoint }}
+          - name: api.gateway.traffic.inspector.enabled
+            value: "{{ .Values.api.gateway.traffic.inspector.enabled }}"
+          - name: api.gateway.traffic.inspector.kafka.topic
+            value: {{ .Values.api.gateway.traffic.inspector.kafka.topic }}
+          - name: api.gateway.traffic.inspector.kafka.groupId
+            value: {{ .Values.api.gateway.traffic.inspector.kafka.groupId }}
+          - name: api.gateway.traffic.inspector.kafka.broker
+            value: {{ .Values.api.gateway.traffic.inspector.kafka.broker }}
+          - name: api.gateway.manager.origin
+            value: {{ .Values.api.gateway.manager.origin }}
+          - name: api.gateway.grafana.endpoint
+            value: {{ .Values.api.gateway.grafana.endpoint }}
+          - name: api.gateway.grafana.create.dashboard
+            value: {{ quote .Values.api.gateway.grafana.create.dashboard }}
+          - name: api.gateway.grafana.user
+            value: {{ .Values.api.gateway.grafana.user }}
+          - name: api.gateway.grafana.password
+            value: {{ .Values.api.gateway.grafana.password }}
+          - name: api.gateway.grafana.token
+            value: {{ .Values.api.gateway.grafana.token }}
+          - name: api.gateway.grafana.basic.auth
+            value: "{{ .Values.api.gateway.grafana.basic.auth }}"
+          - name: api.gateway.grafana.datasource
+            value: {{ .Values.api.gateway.grafana.datasource }}
+          - name: server.ssl.enabled
+            value: "{{ .Values.server.ssl.enabled }}"
+          - name: api.gateway.grafana.create.panels
+            value: "{{ .Values.api.gateway.grafana.create.panels }}"
+          - name: api.gateway.grafana.endpoint
+            value: {{ .Values.api.gateway.grafana.endpoint }}
+          - name: server.ssl.key-store-type
+            value: {{ .Values.server.ssl.key.store.type }}
+          - name: server.ssl.key-store
+            value: {{ .Values.server.ssl.key.store.path }}
+          - name: server.ssl.key-store-password
+            value: {{ .Values.server.ssl.key.store.password }}
+          - name: server.ssl.key-alias
+            value: {{ .Values.server.ssl.key.store.alias }}
+          - name: server.ssl.trust-store
+            value: {{ .Values.server.ssl.trust.store.path }}
+          - name: server.ssl.trust-store-password
+            value: {{ .Values.server.ssl.trust.store.password }}
+          - name: token.provider.key-alias
+            value: {{ .Values.token.provider.key.alias }}
+          - name: token.provider.key-store-password
+            value: {{ .Values.token.provider.key.password }}
+          - name: token.provider.key-store
+            value: {{ .Values.token.provider.key.path }}
+          - name: spring.data.mongodb.host
+            value: {{ .Values.spring.data.mongodb.host }}
+          - name: spring.data.mongodb.port
+            value: "{{ .Values.spring.data.mongodb.port }}"
+          - name: spring.data.mongodb.username
+            value: {{ .Values.spring.data.mongodb.username }}
+          - name: spring.data.mongodb.database
+            value: {{ .Values.spring.data.mongodb.database }}
+          - name: spring.data.mongodb.password
+            value: {{ .Values.spring.data.mongodb.password }}
+          - name: spring.profiles.active
+            value: {{ .Values.spring.profiles.active }}
+          - name: gateway.cache.zookeeper.discovery
+            value: "{{ .Values.gateway.cache.zookeeper.discovery }}"
+          - name: gateway.cache.zookeeper.host
+            value: {{ .Values.gateway.cache.zookeeper.host }}
+          - name: gateway.cache.zookeeper.path
+            value: {{ .Values.gateway.cache.zookeeper.path }}
+          - name: gateway.cache.zookeeper.group.key
+            value: {{ .Values.gateway.cache.zookeeper.group.key }}
+          - name: capi.authorization.keys.endpoint
+            value: {{ .Values.capi.authorization.keys.endpoint }}
+          - name: http.client.ssl.trust-store
+            value: {{ .Values.http.client.ssl.trust.store.path }}
+          - name: http.client.ssl.trust-store-password
+            value: {{ .Values.http.client.ssl.trust.store.password }}
+          image: {{ .Values.image.repository }}
+          name: capi
+          ports:
+          - containerPort: {{ .Values.service.port }}
+          resources: {}
+          volumeMounts:
+          - name: certificate
+            mountPath: /keys/capi.p12
+            subPath: capi.p12
+          - name: truststore
+            mountPath: /keys/truststore.jks
+            subPath: truststore.jks  
+        restartPolicy: Always
+        volumes:
+        - name: certificate
+          configMap:
+            name: certificate
+        - name: truststore
+          configMap:
+            name: truststore
+  status: {}
+kind: List
+metadata: {}
+
