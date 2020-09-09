@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-datasource
+data:
+  prometheus.yml: |-
+{{ .Files.Get "grafana-datasource.yaml" | indent 4}}

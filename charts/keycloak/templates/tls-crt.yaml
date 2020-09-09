@@ -4,4 +4,4 @@ metadata:
   name: tls-crt
 data:
   tls.crt: |-
-{{ .Files.Get "tls.crt" | indent 4}}
+{{ .Files.Get "capi.crt" | indent 4}}

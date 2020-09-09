@@ -4,4 +4,4 @@ metadata:
   name: tls-key
 data:
   tls.key: |-
-{{ .Files.Get "tls.key" | indent 4}}
+{{ .Files.Get "capi.key" | indent 4}}
