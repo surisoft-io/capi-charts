@@ -41,12 +41,22 @@ items:
           volumeMounts:
           - name: grafana-datasource
             mountPath: /etc/grafana/provisioning/datasources
-            subPath: grafana-datasource.yml
+          #- name: grafana-statistics
+          #  mountPath: /etc/grafana/provisioning/dashboards
+          #  subPath: dashboard.yaml
+          - name: grafana-statistics
+            mountPath: /etc/grafana/provisioning/dashboards
         restartPolicy: Always
         volumes:
         - name: grafana-datasource
           configMap:
             name: grafana-datasource
+        #- name: grafana-dashboard
+        #  configMap:
+        #    name: grafana-dashboard
+        - name: grafana-statistics
+          configMap:
+            name: grafana-statistics       
   status: {}
 kind: List
 metadata: {}

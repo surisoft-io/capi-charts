@@ -3,5 +3,5 @@ kind: ConfigMap
 metadata:
   name: grafana-datasource
 data:
-  prometheus.yml: |-
+  datasources.yml: |-
 {{ .Files.Get "grafana-datasource.yaml" | indent 4}}

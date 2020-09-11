@@ -45,7 +45,7 @@ items:
           - name: api.gateway.error.endpoint
             value: {{ .Values.api.gateway.error.endpoint }}
           - name: api.gateway.traffic.inspector.enabled
-            value: "{{ .Values.api.gateway.traffic.inspector.enabled }}"
+            value: {{ quote .Values.api.gateway.traffic.inspector.enabled }}
           - name: api.gateway.traffic.inspector.kafka.topic
             value: {{ .Values.api.gateway.traffic.inspector.kafka.topic }}
           - name: api.gateway.traffic.inspector.kafka.groupId
