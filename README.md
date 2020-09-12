@@ -17,7 +17,7 @@ kubectl get svc
 ```
 
 Ouput:
-
+```sh
 NAME         TYPE           CLUSTER-IP       EXTERNAL-IP   PORT(S)                                        AGE
 capi         LoadBalancer   10.111.249.46    localhost     8380:30988/TCP                                 4h9m
 capi-rest    LoadBalancer   10.96.49.226     localhost     8080:31293/TCP                                 4h9m
@@ -29,3 +29,4 @@ mongo        LoadBalancer   10.108.75.56     localhost     27017:30233/TCP      
 prometheus   LoadBalancer   10.97.22.85      localhost     9090:31291/TCP                                 4h9m
 zipkin       LoadBalancer   10.100.191.219   localhost     9411:30057/TCP                                 4h9m
 zookeeper    LoadBalancer   10.106.123.93    localhost     2181:31171/TCP,2888:31428/TCP,3888:31307/TCP   4h9m
+```
