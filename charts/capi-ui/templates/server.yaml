@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+items:
+- apiVersion: v1
+  kind: Service
+  metadata:
+    labels:
+      app: capi-ui
+    name: capi-ui
+  spec:
+    ports:
+    - name: "{{ .Values.service.port }}"
+      port: {{ .Values.service.port }}
+      targetPort: {{ .Values.service.port }}
+    selector:
+      app: capi-ui
+    type: LoadBalancer
+  status: {}
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    labels:
+      app: capi-ui
+    name: caip-ui
+  spec:
+    selector:
+      matchLabels:
+        app: capi-ui
+    replicas: 1
+    strategy: {}
+    template:
+      metadata:
+        labels:
+          app: capi-ui
+      spec:
+        containers:
+        - image: {{ .Values.image.repository }}
+          name: capi-ui
+          ports:
+          - containerPort: {{ .Values.service.port }}
+          resources: {}
+        restartPolicy: Always
+  status: {}
+kind: List
+metadata: {}
+
