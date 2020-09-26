@@ -13,7 +13,7 @@ items:
       targetPort: {{ .Values.service.port }}
     selector:
       service: capi
-    type: LoadBalancer
+    type: LoadBalancer 
 - apiVersion: apps/v1
   kind: Deployment
   metadata:
@@ -34,6 +34,12 @@ items:
       spec:
         containers:
         - env:
+          - name: hawtio.authenticationEnabled
+            value: {{ quote .Values.hawtio.authenticationEnabled }}
+          - name: management.endpoint.camelroutes.enabled
+            value: {{ quote .Values.management.endpoint.camelroutes.enabled }}
+          - name: api.deployed.routes.context
+            value: {{ .Values.api.deployed.routes.context }}
           - name: api.gateway.api.running.inspector.period
             value: "{{ .Values.api.gateway.api.running.inspector.period }}"
           - name: api.gateway.api.throttling.inspector.period

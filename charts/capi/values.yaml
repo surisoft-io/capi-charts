@@ -5,13 +5,21 @@
 replicaCount: 1
 
 image:
-  repository: surisoft/capi-gateway:1.4.1
+  repository: surisoft/capi-gateway:1.4.3
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: ""
 
 service:
   port: 8380
+
+management:
+  endpoint:
+    camelroutes:
+      enabled: true
+
+hawtio:
+  authenticationEnabled: false
 
 server:
   ssl:
@@ -45,6 +53,9 @@ spring:
       database: capi
       password: capi
 api:
+  deployed:
+    routes:
+      context: /analytics/camelroutes
   gateway:
     manager:
       orign: http://localhost:4200

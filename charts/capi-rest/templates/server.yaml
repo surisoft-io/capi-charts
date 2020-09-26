@@ -82,7 +82,7 @@ items:
             value: /discovery/hazelcast
           - name: gateway.cache.zookeeper.group.key
             value: capi    
-          image: surisoft/capi-gateway-rest:1.4.0
+          image: surisoft/capi-gateway-rest:1.4.3
           name: capi-rest
           ports:
           - containerPort: 8080
