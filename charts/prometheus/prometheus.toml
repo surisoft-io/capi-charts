@@ -31,3 +31,10 @@ scrape_configs:
       insecure_skip_verify: true
     static_configs:
       - targets: ['capi:8380']
+  - job_name: 'capi-gateway-camel'
+    metrics_path: 'analytics/jolokia'
+    scheme: 'https'
+    tls_config:
+      insecure_skip_verify: true
+    static_configs:
+      - targets: ['capi:8380']

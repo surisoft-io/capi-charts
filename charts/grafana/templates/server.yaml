@@ -45,7 +45,7 @@ items:
           #  mountPath: /etc/grafana/provisioning/dashboards
           #  subPath: dashboard.yaml
           - name: grafana-statistics
-            mountPath: /etc/grafana/provisioning/dashboards
+            mountPath: /etc/grafana/provisioning/dashboards/capi-statistics.json
         restartPolicy: Always
         volumes:
         - name: grafana-datasource
