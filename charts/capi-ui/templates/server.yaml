@@ -20,7 +20,7 @@ items:
   metadata:
     labels:
       app: capi-ui
-    name: caip-ui
+    name: capi-ui
   spec:
     selector:
       matchLabels:
