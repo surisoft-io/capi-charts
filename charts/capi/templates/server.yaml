@@ -106,6 +106,8 @@ items:
             value: {{ .Values.spring.data.mongodb.username }}
           - name: spring.data.mongodb.database
             value: {{ .Values.spring.data.mongodb.database }}
+          - name: spring.data.mongodb.authentication-database
+            value: admin
           - name: spring.data.mongodb.password
             value: {{ .Values.spring.data.mongodb.password }}
           - name: spring.profiles.active
