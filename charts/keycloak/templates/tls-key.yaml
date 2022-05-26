@@ -1,7 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: tls-key
-data:
-  tls.key: |-
-{{ .Files.Get "capi.key" | indent 4}}

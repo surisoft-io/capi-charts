@@ -1,7 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: grafana-statistics
-data:
-  capi-statistics.json: |-
-{{ .Files.Get "capi-statistics.json" | indent 4}}

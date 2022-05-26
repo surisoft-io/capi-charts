@@ -1,7 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: tls-crt
-data:
-  tls.crt: |-
-{{ .Files.Get "capi.crt" | indent 4}}

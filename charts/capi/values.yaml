@@ -1,13 +1,8 @@
-# Default values for capi.
-# This is a YAML-formatted file.
-# Declare variables to be passed into your templates.
-
 replicaCount: 1
 
 image:
-  repository: surisoft/capi-gateway:1.4.6
+  repository: surisoft/capi-lb:2.1.2
   pullPolicy: IfNotPresent
-  # Overrides the image tag whose default is the chart appVersion.
   tag: ""
 
 service:
@@ -18,6 +13,48 @@ management:
     camelroutes:
       enabled: true
 
+camel:
+  servlet:
+    mapping:
+      context-path: /capi/*
+
+capi:
+  db:
+    discovery:
+      timer:
+        interval: 20
+  persistence:
+    enabled: true
+  manager:
+    security:
+      enabled: false
+      issuer: 
+  trust:
+    store:
+      enabled: false
+      path: /keys/truststore.jks
+      password: changeit
+  consul:
+    host: http://localhost:8500
+    discovery:
+      enabled: true
+      timer:
+        interval: 20
+  gateway:
+    error:
+      endpoint: capi:8380/capi-error
+  zipkin:
+    enabled: false
+    endpoint:     
+
+logging:
+  level:
+    root: INFO
+  io:
+    surisoft:
+      capi:
+        lb: TRACE
+
 hawtio:
   authenticationEnabled: false
 
@@ -26,130 +63,46 @@ server:
     enabled: true
     key:
       store: 
-        type: PKCS12
-        path: /keys/capi.p12
-        alias: capigateway
-        password: capigateway
-    trust:
-      store: 
-        path: /keys/truststore.jks
-        password: capigateway
-
-token:
-  provider:
-    key: 
-      alias: capigateway
-      password: capigateway
-      path: /keys/capi.p12
+        type: JKS
+        path: /keys/capi.jks
+        alias: capi
+        password: capilb
 
 spring:
+  datasource:
+    url: jdbc:h2:mem:db;DB_CLOSE_DELAY=-1;
+    username: capi
+    password: capi
   profiles:
-    active: demo
-  data:
-    mongodb:
-      host: mongo
-      port: 27017
-      username: capi
-      database: capi
-      password: capi
-api:
-  deployed:
-    routes:
-      context: /analytics/camelroutes
-  gateway:
-    manager:
-      orign: http://localhost:4200
-    traffic:
-      inspector:
-        enabled: true
-        kafka:
-          topic: capi-traffic-inspector
-          groupId: capiGroup
-          broker: kafka:9092
-    error:
-      endpoint: capi:8380/capi-error
-    grafana:
-      endpoint: http://grafana:3000/api/dashboards/db 
-      create:
-        dashboard: true
-        panels: false
-      user: admin
-      password: admin
-      token:
-      basic:
-        auth: true
-      datasource: Prometheus
-    zipkin:
-      endpoint: http://zipkin:9411/api/v2/spans
-    prometheus:
-      endpoint: http://prometheus:9090
-    api:
-      throttling:
-        inspector:
-          period: 5000
-      running:
-        inspector:
-          period: 60000
-gateway:
-  cache:
-    zookeeper:
-      discovery: true
-      host: zookeeper:2181
-      path: /discovery/hazelcast
-      group:
-        key: capi   
-capi:
-  authorization:
-    keys:
-      endpoint: https://keycloak:8443/auth/realms/capi/protocol/openid-connect/certs        
-http:
-  client:
-    ssl:
-      trust:
-        store: 
-          path: /keys/truststore.jks
-          password: capigateway
+    active: default
+
+trust:
+  store:
+    name: truststore.jks 
+    encoded: MIID1gIBAzCCA48GCSqGSIb3DQEHAaCCA4AEggN8MIIDeDCCA3QGCSqGSIb3DQEHBqCCA2UwggNhAgEAMIIDWgYJKoZIhvcNAQcBMCkGCiqGSIb3DQEMAQYwGwQUe9g/4QTOhhc5j5V32LISTAfMQiICAwDDUICCAyC7f6FZXeOI2xRmoetgi3465ahVAPGazhJffPFYbYEZZZLdwlJU7hTNMIP7aHfn27zVztoWBtMhpenDK2KjCpO9aQ/H1YwM1N4YoCnqgCqE7Xg6uy9GO1A/44sKBpHR006jiBkTgorO2Z9VzO2EoWSdm5lVLXp2kc4D9m6QTdvuPf3fSEJ4Bs65BKsbKVJZgNL4Zf85K2wFOkObrE85RFGdmCYBfucC0dDZr0kd0/YZ1Ko8OEZuCUh5Xi2Eba3l4qDFXZuJHkhvDwFzIXP+7mHvWGnT1JN30+FzysFVxliG3lN8YrbAmDoy/Eck7ShCw6leKeJPc5SI3SOGEyEIJY0UI5PwIS+br2TiIse8alqT6IHd39dX/wSu5LIahhYb6Sh+b70EibeVz3iUWXphTp+hG6nrDU9YQYmZ5l53TcWVksO1j+Z/eHrtyQ0DLSl0QRPT9A6S3fliGh1brPFaHbMv5+SLvkfWIGx6fZ4YX5Noa5fClvkKj89kSw96TBX4SZASzRF60SBd29j3SHhGv2iKeTjqvXUz3ayjJmOB8HBCl8cy7ifdT+0z2RbApq8J3+tveY7AuMyaPXAZlscuKYIjcC7/sCyi8g1Ekmu7+iu5vKzf1pdYdq+4UtVUsA6KobQ8j2OOlj35WZ6YdOL2tnNXIGU12fT5eP7p1MsJJz8JlM8M9IuwytKUptn/G89XIbGm9AfnKmwjodUquPGSJ0zlTXC8fMWIxOICVG4iSvf0/HTSYh79CmQoauUS4Kyt1LupH1UZnWXmGzRpV/Aa2W5oOQBgy53IFMmP4fQcbSFbhbX1H5+c2qQpHlbvYMeF5AYXhfW/1MmxbcKowR3627d23iqVLRuHWt9piWFRi+J9Ro/CIUnkZOIe/igOBKFgZnJVR9m+mlIfKTC+3kupAtDBLuKc7m1ie9+2t2ilRqFhmxs87FHsUWYVsImcrPaBvb9WuUyJjg3wpMUaHRImAG+TzrlDEvL97Mwh3iVMjycghC9kg2zp0TISQr6P7QXuKQ4XGMw7d123GZTFu5dSldne31iEG3QzFtrvPKfJrt0EdTA+MCEwCQYFKw4DAhoFAAQUldiTLLmJXhJ7OL31GBowgitFq4wEFB0BGeBTyazsMusLcKYDwtQaYx7KAgMBhqA=
+
+certificate:
+  name: capi.jks
+  encoded: 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
 
 serviceAccount:
-  # Specifies whether a service account should be created
   create: true
-  # Annotations to add to the service account
   annotations: {}
-  # The name of the service account to use.
-  # If not set and create is true, a name is generated using the fullname template
   name: ""
 
 podAnnotations: {}
 
 podSecurityContext: {}
-  # fsGroup: 2000
 
 securityContext: {}
-  # capabilities:
-  #   drop:
-  #   - ALL
-  # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-  # runAsUser: 1000
 
 resources: {}
-  # We usually recommend not to specify default resources and to leave this as a conscious
-  # choice for the user. This also increases chances charts run on environments with little
-  # resources, such as Minikube. If you do want to specify resources, uncomment the following
-  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-  # limits:
-  #   cpu: 100m
-  #   memory: 128Mi
-  # requests:
-  #   cpu: 100m
-  #   memory: 128Mi
 
 autoscaling:
   enabled: false
   minReplicas: 1
   maxReplicas: 100
   targetCPUUtilizationPercentage: 80
-  # targetMemoryUtilizationPercentage: 80
 
 nodeSelector: {}
 

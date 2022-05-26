@@ -34,118 +34,76 @@ items:
       spec:
         containers:
         - env:
-          - name: hawtio.authenticationEnabled
-            value: {{ quote .Values.hawtio.authenticationEnabled }}
+          - name: spring.profiles.active
+            value: {{ quote .Values.spring.profiles.active }}
+          - name: capi.persistence.enabled
+            value: {{quote .Values.capi.persistence.enabled }}
+          - name: capi.db.discovery.timer.interval
+            value: {{ quote .Values.capi.db.discovery.timer.interval }} 
+          - name: spring.datasource.url
+            value: {{ quote .Values.spring.datasource.url }}
+          - name: spring.datasource.username
+            value: {{ quote .Values.spring.datasource.username }}
+          - name: spring.datasource.password
+            value: {{ quote .Values.spring.datasource.password }}    
           - name: management.endpoint.camelroutes.enabled
             value: {{ quote .Values.management.endpoint.camelroutes.enabled }}
-          - name: api.deployed.routes.context
-            value: {{ .Values.api.deployed.routes.context }}
-          - name: api.gateway.api.running.inspector.period
-            value: "{{ .Values.api.gateway.api.running.inspector.period }}"
-          - name: api.gateway.api.throttling.inspector.period
-            value: "{{ .Values.api.gateway.api.throttling.inspector.period }}"
-          - name: api.gateway.prometheus.endpoint
-            value: {{ .Values.api.gateway.prometheus.endpoint }}
-          - name: api.gateway.zipkin.endpoint
-            value: {{ .Values.api.gateway.zipkin.endpoint }}
-          - name: api.gateway.error.endpoint
-            value: {{ .Values.api.gateway.error.endpoint }}
-          - name: api.gateway.traffic.inspector.enabled
-            value: {{ quote .Values.api.gateway.traffic.inspector.enabled }}
-          - name: api.gateway.traffic.inspector.kafka.topic
-            value: {{ .Values.api.gateway.traffic.inspector.kafka.topic }}
-          - name: api.gateway.traffic.inspector.kafka.groupId
-            value: {{ .Values.api.gateway.traffic.inspector.kafka.groupId }}
-          - name: api.gateway.traffic.inspector.kafka.broker
-            value: {{ .Values.api.gateway.traffic.inspector.kafka.broker }}
-          - name: api.gateway.manager.origin
-            value: {{ .Values.api.gateway.manager.origin }}
-          - name: api.gateway.grafana.endpoint
-            value: {{ .Values.api.gateway.grafana.endpoint }}
-          - name: api.gateway.grafana.create.dashboard
-            value: {{ quote .Values.api.gateway.grafana.create.dashboard }}
-          - name: api.gateway.grafana.user
-            value: {{ .Values.api.gateway.grafana.user }}
-          - name: api.gateway.grafana.password
-            value: {{ .Values.api.gateway.grafana.password }}
-          - name: api.gateway.grafana.token
-            value: {{ .Values.api.gateway.grafana.token }}
-          - name: api.gateway.grafana.basic.auth
-            value: "{{ .Values.api.gateway.grafana.basic.auth }}"
-          - name: api.gateway.grafana.datasource
-            value: {{ .Values.api.gateway.grafana.datasource }}
+          - name: capi.consul.discovery.enabled
+            value: {{ quote .Values.capi.consul.discovery.enabled }}
+          - name: capi.consul.discovery.timer.interval
+            value: {{ quote .Values.capi.consul.discovery.timer.interval }}
+          - name: capi.consul.host
+            value: {{ quote .Values.capi.consul.host }}
+          ## Trust Store Configuration      
+          - name: capi.trust.store.enabled
+            value: {{ quote .Values.capi.trust.store.enabled }}
+          - name: capi.trust.store.path
+            value: {{ quote .Values.capi.trust.store.path }}
+          - name: capi.trust.store.password
+            value: {{ quote .Values.capi.trust.store.password }}
+          - name: capi.manager.security.enabled
+            value: {{ quote .Values.capi.manager.security.enabled }}
+          - name: capi.manager.security.issuer
+            value: {{ quote .Values.capi.manager.security.issuer }}
+          ## SSL Configuration  
           - name: server.ssl.enabled
-            value: "{{ .Values.server.ssl.enabled }}"
-          - name: api.gateway.grafana.create.panels
-            value: "{{ .Values.api.gateway.grafana.create.panels }}"
-          - name: api.gateway.grafana.endpoint
-            value: {{ .Values.api.gateway.grafana.endpoint }}
+            value: {{ quote .Values.server.ssl.enabled }}
           - name: server.ssl.key-store-type
-            value: {{ .Values.server.ssl.key.store.type }}
+            value: {{ quote .Values.server.ssl.key.store.type }}
           - name: server.ssl.key-store
-            value: {{ .Values.server.ssl.key.store.path }}
-          - name: server.ssl.key-store-password
-            value: {{ .Values.server.ssl.key.store.password }}
+            value: {{ quote .Values.server.ssl.key.store.path }}
           - name: server.ssl.key-alias
-            value: {{ .Values.server.ssl.key.store.alias }}
-          - name: server.ssl.trust-store
-            value: {{ .Values.server.ssl.trust.store.path }}
-          - name: server.ssl.trust-store-password
-            value: {{ .Values.server.ssl.trust.store.password }}
-          - name: token.provider.key-alias
-            value: {{ .Values.token.provider.key.alias }}
-          - name: token.provider.key-store-password
-            value: {{ .Values.token.provider.key.password }}
-          - name: token.provider.key-store
-            value: {{ .Values.token.provider.key.path }}
-          - name: spring.data.mongodb.host
-            value: {{ .Values.spring.data.mongodb.host }}
-          - name: spring.data.mongodb.port
-            value: "{{ .Values.spring.data.mongodb.port }}"
-          - name: spring.data.mongodb.username
-            value: {{ .Values.spring.data.mongodb.username }}
-          - name: spring.data.mongodb.database
-            value: {{ .Values.spring.data.mongodb.database }}
-          - name: spring.data.mongodb.authentication-database
-            value: admin
-          - name: spring.data.mongodb.password
-            value: {{ .Values.spring.data.mongodb.password }}
-          - name: spring.profiles.active
-            value: {{ .Values.spring.profiles.active }}
-          - name: gateway.cache.zookeeper.discovery
-            value: "{{ .Values.gateway.cache.zookeeper.discovery }}"
-          - name: gateway.cache.zookeeper.host
-            value: {{ .Values.gateway.cache.zookeeper.host }}
-          - name: gateway.cache.zookeeper.path
-            value: {{ .Values.gateway.cache.zookeeper.path }}
-          - name: gateway.cache.zookeeper.group.key
-            value: {{ .Values.gateway.cache.zookeeper.group.key }}
-          - name: capi.authorization.keys.endpoint
-            value: {{ .Values.capi.authorization.keys.endpoint }}
-          - name: http.client.ssl.trust-store
-            value: {{ .Values.http.client.ssl.trust.store.path }}
-          - name: http.client.ssl.trust-store-password
-            value: {{ .Values.http.client.ssl.trust.store.password }}
+            value: {{ quote .Values.server.ssl.key.store.alias }}
+          - name: server.ssl.key-store-password
+            value: {{ quote .Values.server.ssl.key.store.password }}              
           image: {{ .Values.image.repository }}
           name: capi
           ports:
           - containerPort: {{ .Values.service.port }}
           resources: {}
           volumeMounts:
-          - name: certificate
-            mountPath: /keys/capi.p12
-            subPath: capi.p12
+          {{ if .Values.server.ssl.enabled }}
+          - name: capi-certificate
+            mountPath: /keys/capi.jks
+            subPath: capi.jks
+          {{ end }}
+          {{ if .Values.capi.trust.store.enabled }}  
           - name: truststore
             mountPath: /keys/truststore.jks
             subPath: truststore.jks  
+          {{ end }}  
         restartPolicy: Always
         volumes:
-        - name: certificate
+        {{ if .Values.server.ssl.enabled }}
+        - name: capi-certificate
           configMap:
-            name: certificate
+            name: capi-certificate
+        {{ end }}
+        {{ if .Values.capi.trust.store.enabled }}    
         - name: truststore
           configMap:
             name: truststore
+        {{ end }}    
   status: {}
 kind: List
 metadata: {}
